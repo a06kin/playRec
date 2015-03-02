@@ -20,12 +20,19 @@
         <a class="waves-effect waves-light btn" onclick="playAll();">playAll</a>
         <a class="waves-effect waves-light btn" onclick="pauseAll();">pauseAll</a>
         <a class="waves-effect waves-light btn" onclick="stopAll();">stopAll</a>
-        <a class="waves-effect waves-light btn" onclick="startRecording(this);">record</a>
-        <a class="waves-effect waves-light btn disabled" onclick="stopRecording(this);">stop record</a>
+        <a class="waves-effect waves-light btn" onclick="startRecording();">record</a>
+        <a class="waves-effect waves-light btn" onclick="stopRecording();">stop record</a>
+        <a class="waves-effect waves-light btn" onclick="startRecordAndPlay();">Record&Play</a>
       </div>
     </div>
 
-    <ul id="recordingslist" class="collection"></ul>
+    <div class="row">
+      <div class="col m12 center">
+        <div class="progress" id="rec">
+          <div class="indeterminate"></div>
+        </div>
+      </div>
+    </div>
 
     <audio class="players" id="defPlayer" controls hidden>
       <source type="audio/mp3">
@@ -47,6 +54,15 @@
   var audiofiles = [];
   var audio_context;
   var recorder;
+  var isRec = false;
+
+  function hide(obj){
+    obj.style.display = 'none';
+  }
+
+  function show(obj){
+    obj.style.display = 'block';
+  }
 
   function __log(e, data) {
     log.innerHTML += "\n" + e + " " + (data || '');
@@ -132,23 +148,38 @@
     __log('Recorder initialised.');
   }
 
-  function startRecording(button) {
-    recorder && recorder.record();
-    button.disabled = true;
-    button.nextElementSibling.disabled = false;
-    __log('Recording...');
+  function startRecording() {
+    if (!isRec){
+      show(rec);
+      isRec = true;
+      recorder && recorder.record();
+      __log('Recording...');
+    }
   }
 
-  function stopRecording(button) {
-    recorder && recorder.stop();
-    button.disabled = true;
-    button.previousElementSibling.disabled = false;
-    __log('Stopped recording.');
+  function stopRecording() {
+    if (isRec){
+      hide(rec);
+      isRec = false;
+      recorder && recorder.stop();
+      __log('Stopped recording.');
 
-    // create WAV download link using audio data blob
-    createDownloadLink();
+      // create WAV download link using audio data blob
+      createDownloadLink();
 
-    recorder.clear();
+      recorder.clear();
+
+
+    }
+  }
+
+  function startRecordAndPlay() {
+    if (!isRec){
+      show(rec);
+      playAll();
+      startRecording();
+      __log('Play & Record');
+    }
   }
 
   function createDownloadLink() {
@@ -172,6 +203,8 @@
 
   (
     function () {
+      hide(rec);
+
       console.log("init");
       var file_drop = document.getElementById('files');
 
