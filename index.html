@@ -137,7 +137,6 @@
   }
 
   function startUserMedia(stream) {
-    console.log("startUserMedia");
     var input = audio_context.createMediaStreamSource(stream);
     __log('Media stream created.');
     // Uncomment if you want the audio to feedback directly
@@ -205,7 +204,6 @@
     function () {
       hide(rec);
 
-      console.log("init");
       var file_drop = document.getElementById('files');
 
       file_drop.addEventListener('dragover', handleDragOver, false);
@@ -225,11 +223,9 @@
         alert('No web audio support in this browser!');
       }
 
-      console.log("getUserMedia");
       navigator.getUserMedia({audio: true}, startUserMedia, function(e) {
         __log('No live audio input: ' + e);
       });
-      console.log("endInit");
     }
   )();
 </script>
